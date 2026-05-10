@@ -10,6 +10,9 @@ import { UsersModule } from './modules/users/users.module'
 import { RolesModule } from './modules/roles/roles.module'
 import { PermissionsModule } from './modules/permissions/permissions.module'
 import { DepartmentsModule } from './modules/departments/departments.module'
+import { StudentsModule } from './modules/students/students.module'
+import { TeachersModule } from './modules/teachers/teachers.module'
+import { StaffModule } from './modules/staff/staff.module'
 
 // Common infrastructure
 import { EventBusModule } from './common/event-bus'
@@ -68,6 +71,9 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware'
     RolesModule,
     PermissionsModule,
     DepartmentsModule,
+    StudentsModule,
+    TeachersModule,
+    StaffModule,
 
     // Shared services
     WorkflowModule,

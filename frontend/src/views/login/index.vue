@@ -15,7 +15,7 @@
             size="large"
           >
             <template #prefix>
-              <icon-user />
+              <IconUser />
             </template>
           </a-input>
         </a-form-item>
@@ -28,7 +28,7 @@
             size="large"
           >
             <template #prefix>
-              <icon-lock />
+              <IconLock />
             </template>
           </a-input-password>
         </a-form-item>
@@ -52,6 +52,7 @@ import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import type { FormInstance } from '@arco-design/web-vue'
+import { IconUser, IconLock } from '@arco-design/web-vue/es/icon'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()

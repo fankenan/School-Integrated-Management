@@ -17,7 +17,7 @@
         <a-card class="stat-card" :bordered="false">
           <div class="stat-content">
             <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-              <icon-user :size="32" />
+              <IconUser :size="32" />
             </div>
             <div class="stat-info">
               <div class="stat-value">{{ stats.studentCount }}</div>
@@ -31,7 +31,7 @@
         <a-card class="stat-card" :bordered="false">
           <div class="stat-content">
             <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">
-              <icon-book :size="32" />
+              <IconBook :size="32" />
             </div>
             <div class="stat-info">
               <div class="stat-value">{{ stats.teacherCount }}</div>
@@ -45,7 +45,7 @@
         <a-card class="stat-card" :bordered="false">
           <div class="stat-content">
             <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
-              <icon-home :size="32" />
+              <IconHome :size="32" />
             </div>
             <div class="stat-info">
               <div class="stat-value">{{ stats.classCount }}</div>
@@ -59,7 +59,7 @@
         <a-card class="stat-card" :bordered="false">
           <div class="stat-content">
             <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">
-              <icon-notification :size="32" />
+              <IconNotification :size="32" />
             </div>
             <div class="stat-info">
               <div class="stat-value">{{ stats.noticeCount }}</div>
@@ -75,7 +75,7 @@
         <a-card class="card" :bordered="false">
           <template #title>
             <div class="card-title">
-              <icon-apps />
+              <IconApps />
               <span>快捷入口</span>
             </div>
           </template>
@@ -94,7 +94,7 @@
                 <div class="quick-link-name">{{ link.name }}</div>
                 <div class="quick-link-desc">{{ link.desc }}</div>
               </div>
-              <icon-right />
+              <IconRight />
             </div>
           </div>
         </a-card>
@@ -104,7 +104,7 @@
         <a-card class="card" :bordered="false">
           <template #title>
             <div class="card-title">
-              <icon-notification />
+              <IconNotification />
               <span>最新通知</span>
               <a-badge :count="recentNotices.length" :max-count="99" />
             </div>
@@ -120,7 +120,7 @@
                 <div class="notice-title">{{ item.title }}</div>
                 <div class="notice-time">{{ item.time }}</div>
               </div>
-              <icon-right />
+              <IconRight />
             </div>
           </div>
         </a-card>
@@ -133,6 +133,18 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import {
+  IconUser,
+  IconBook,
+  IconHome,
+  IconNotification,
+  IconApps,
+  IconRight,
+  IconCalendar,
+  IconDashboard,
+  IconLock,
+  IconTool,
+} from '@arco-design/web-vue/es/icon'
 import dayjs from 'dayjs'
 
 const router = useRouter()
@@ -169,7 +181,19 @@ const recentNotices = ref([
 
 // 获取图标组件
 const getIcon = (iconName: string) => {
-  return `icon-${iconName.toLowerCase()}`
+  const iconMap: Record<string, any> = {
+    'icon-user': IconUser,
+    'icon-book': IconBook,
+    'icon-home': IconHome,
+    'icon-notification': IconNotification,
+    'icon-apps': IconApps,
+    'icon-calendar': IconCalendar,
+    'icon-dashboard': IconDashboard,
+    'icon-lock': IconLock,
+    'icon-tool': IconTool,
+  }
+  const key = `icon-${iconName.toLowerCase()}`
+  return iconMap[key] || IconApps
 }
 
 onMounted(() => {

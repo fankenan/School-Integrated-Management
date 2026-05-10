@@ -10,21 +10,23 @@
       <div class="sidebar-header">
         <template v-if="!isCollapse">
           <div class="logo">
-            <icon-school class="logo-icon" />
+            <IconHome class="logo-icon" />
             <span class="logo-text">学校管理平台</span>
           </div>
         </template>
         <div v-else class="logo-collapsed">
-          <icon-school />
+          <IconHome />
         </div>
       </div>
 
       <a-menu
         :default-selected-keys="[activeMenu]"
+        :default-open-keys="openKeys"
         :collapsed="isCollapse"
         :auto-open-selected="true"
         :style="{ width: isCollapse ? '64px' : '240px' }"
         class="sidebar-menu"
+        @menu-item-click="handleMenuClick"
       >
         <template v-for="route in menuRoutes" :key="route.path">
           <!-- 没有子菜单的路由 -->
@@ -63,7 +65,7 @@
         <div class="header-left">
           <a-button type="text" @click="toggleCollapse">
             <template #icon>
-              <component :is="isCollapse ? 'icon-menu-unfold' : 'icon-menu-fold'" />
+              <component :is="isCollapse ? IconMenuUnfold : IconMenuFold" />
             </template>
           </a-button>
 
@@ -78,7 +80,7 @@
           <a-space :size="16">
             <a-button type="text" shape="circle">
               <template #icon>
-                <icon-notification />
+                <IconNotification />
               </template>
             </a-button>
 
@@ -88,19 +90,19 @@
                   {{ userStore.userInfo?.realName?.charAt(0) }}
                 </a-avatar>
                 <span class="user-name">{{ userStore.userInfo?.realName }}</span>
-                <icon-down />
+                <IconDown />
               </div>
               <template #content>
                 <a-doption value="profile">
-                  <icon-user />
+                  <IconUser />
                   <span>个人中心</span>
                 </a-doption>
                 <a-doption value="settings">
-                  <icon-settings />
+                  <IconSettings />
                   <span>系统设置</span>
                 </a-doption>
                 <a-doption value="logout">
-                  <icon-export />
+                  <IconExport />
                   <span>退出登录</span>
                 </a-doption>
               </template>
@@ -127,6 +129,29 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Modal, Message } from '@arco-design/web-vue'
+import {
+  IconHome,
+  IconMenuUnfold,
+  IconMenuFold,
+  IconApps,
+  IconUser,
+  IconSettings,
+  IconExport,
+  IconNotification,
+  IconDown,
+  IconBook,
+  IconCalendar,
+  IconDashboard,
+  IconLock,
+  IconTool,
+  IconUserGroup,
+  IconSafe,
+  IconMessage,
+  IconHeart,
+  IconStar,
+  IconSearch,
+  IconFire,
+} from '@arco-design/web-vue/es/icon'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
@@ -136,7 +161,33 @@ const userStore = useUserStore()
 const isCollapse = ref(false)
 
 // 当前激活的菜单
-const activeMenu = computed(() => route.path)
+const activeMenu = computed(() => {
+  // Match best-fit: the child path is what the user actually navigated to
+  const matched = route.matched
+  for (let i = matched.length - 1; i >= 0; i--) {
+    const r = matched[i]
+    if (r.path) {
+      // If this is a child of a layout route, the key format is "parent/child"
+      if (i > 0 && matched[i - 1].path && matched[i - 1].path !== '/') {
+        return matched[i - 1].path + '/' + r.path
+      }
+      return r.path
+    }
+  }
+  return route.path
+})
+
+// 默认展开的父级菜单
+const openKeys = computed(() => {
+  const matched = route.matched
+  const keys: string[] = []
+  for (const item of matched) {
+    if (item.path && item.path !== '/' && item.children?.length > 0) {
+      keys.push(item.path)
+    }
+  }
+  return keys
+})
 
 // 菜单路由（从路由中过滤出需要显示在侧边栏的路由）
 const menuRoutes = computed(() => {
@@ -146,6 +197,7 @@ const menuRoutes = computed(() => {
       (r) =>
         r.path !== '/' &&
         r.path !== '/login' &&
+        !r.path.includes(':') &&
         r.meta?.title &&
         !r.meta?.ignoreAuth &&
         r.children?.length > 0
@@ -159,10 +211,36 @@ const breadcrumbs = computed(() => {
   return matched
 })
 
+// 菜单点击导航
+const handleMenuClick = (key: string) => {
+  router.push(key)
+}
+
 // 获取图标组件
 const getIcon = (iconName?: string) => {
-  if (!iconName) return 'icon-apps'
-  return `icon-${iconName.toLowerCase()}`
+  if (!iconName) return IconApps
+  const iconMap: Record<string, any> = {
+    'icon-apps': IconApps,
+    'icon-user': IconUser,
+    'icon-settings': IconSettings,
+    'icon-export': IconExport,
+    'icon-notification': IconNotification,
+    'icon-home': IconHome,
+    'icon-book': IconBook,
+    'icon-calendar': IconCalendar,
+    'icon-dashboard': IconDashboard,
+    'icon-lock': IconLock,
+    'icon-tool': IconTool,
+    'icon-usergroup': IconUserGroup,
+    'icon-safe': IconSafe,
+    'icon-message': IconMessage,
+    'icon-heart': IconHeart,
+    'icon-star': IconStar,
+    'icon-search': IconSearch,
+    'icon-fire': IconFire,
+  }
+  const key = `icon-${iconName.toLowerCase()}`
+  return iconMap[key] || IconApps
 }
 
 // 切换侧边栏折叠状态

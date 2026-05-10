@@ -9,7 +9,12 @@ export default defineConfig({
   plugins: [
     vue(),
     Components({
-      resolvers: [ArcoResolver()],
+      resolvers: [
+        ArcoResolver({
+          importStyle: false,
+          resolveIcons: true,
+        }),
+      ],
     }),
   ],
   resolve: {

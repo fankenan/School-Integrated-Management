@@ -10,9 +10,9 @@ export interface ResponseData<T = any> {
   message: string
 }
 
-// 创建axios实例
+// 创建axios实例 - 使用空baseURL，让代理处理/api路径
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: '',
   timeout: 30000,
 })
 
