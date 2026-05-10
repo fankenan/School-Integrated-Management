@@ -1,0 +1,72 @@
+// 颜色变量 - 基于Arco Design
+$primary-color: #165dff;
+$primary-light: #4080ff;
+$primary-lighter: #66a3ff;
+$primary-extra-light: #adc6ff;
+
+$success-color: #00b42a;
+$warning-color: #ff7d00;
+$danger-color: #f53f3f;
+$info-color: #165dff;
+
+$dark-color: #1d2129;
+$regular-color: #4e5969;
+$secondary-color: #86909c;
+$placeholder-color: #c9cdd4;
+$border-color: #e5e6eb;
+$lighter-border: #f2f3f5;
+$extra-light-border: #f7f8fa;
+$background-color: #f2f3f5;
+$white-color: #ffffff;
+
+// 字体变量
+$font-size-extra-large: 20px;
+$font-size-large: 18px;
+$font-size-medium: 16px;
+$font-size-base: 14px;
+$font-size-small: 13px;
+$font-size-extra-small: 12px;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// 间距变量
+$spacing-extra-large: 24px;
+$spacing-large: 20px;
+$spacing-medium: 16px;
+$spacing-base: 14px;
+$spacing-small: 12px;
+$spacing-extra-small: 8px;
+$spacing-mini: 4px;
+
+// 布局变量
+$header-height: 60px;
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 64px;
+
+// 阴影变量
+$box-shadow-base: 0 2px 5px rgba(0, 0, 0, 0.1);
+$box-shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.15);
+$box-shadow-light: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+// 圆角变量
+$border-radius-base: 4px;
+$border-radius-small: 2px;
+$border-radius-large: 8px;
+$border-radius-circle: 50%;
+
+// 过渡变量
+$transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fade: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-transform: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// z-index层级
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-notification: 1070;

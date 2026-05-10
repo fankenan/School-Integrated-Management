@@ -1,0 +1,1 @@
+export { WechatUser, WechatAppType } from './wechat-user.entity'

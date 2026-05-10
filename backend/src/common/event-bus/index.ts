@@ -1,0 +1,1 @@
+export { EventBusModule } from './event-bus.module'

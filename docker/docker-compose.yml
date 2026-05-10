@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:14-alpine
+    container_name: school_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: school_management
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - school_network
+    restart: unless-stopped
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: school_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - school_network
+    restart: unless-stopped
+
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: school_backend
+    environment:
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: your_password
+      DB_DATABASE: school_management
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: your_jwt_secret_key
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - school_network
+    restart: unless-stopped
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    container_name: school_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - school_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  school_network:
+    driver: bridge

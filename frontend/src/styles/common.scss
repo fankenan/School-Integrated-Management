@@ -1,0 +1,165 @@
+// 通用工具类
+.clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+// 滚动条样式 - 适配Arco Design
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c9cdd4;
+  border-radius: 3px;
+
+  &:hover {
+    background: #86909c;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+// 卡片样式
+.card {
+  background: #ffffff;
+  border-radius: $border-radius-large;
+  box-shadow: $box-shadow-base;
+  padding: $spacing-medium;
+
+  &.hover-effect {
+    transition: $transition-base;
+
+    &:hover {
+      box-shadow: $box-shadow-dark;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// 按钮组样式
+.button-group {
+  display: flex;
+  gap: $spacing-small;
+}
+
+// 标签样式
+.tag {
+  display: inline-block;
+  padding: $spacing-mini $spacing-small;
+  border-radius: $border-radius-small;
+  font-size: $font-size-extra-small;
+  font-weight: $font-weight-medium;
+
+  &.primary {
+    background: rgba(22, 93, 255, 0.1);
+    color: $primary-color;
+  }
+
+  &.success {
+    background: rgba(0, 180, 42, 0.1);
+    color: $success-color;
+  }
+
+  &.warning {
+    background: rgba(255, 125, 0, 0.1);
+    color: $warning-color;
+  }
+
+  &.danger {
+    background: rgba(245, 63, 63, 0.1);
+    color: $danger-color;
+  }
+}
+
+// 分割线样式
+.divider {
+  height: 1px;
+  background: $border-color;
+  margin: $spacing-medium 0;
+
+  &.vertical {
+    width: 1px;
+    height: auto;
+    margin: 0 $spacing-medium;
+  }
+}
+
+// 空状态样式
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-extra-large;
+  color: $secondary-color;
+
+  .empty-icon {
+    font-size: 64px;
+    color: $placeholder-color;
+    margin-bottom: $spacing-medium;
+  }
+
+  .empty-text {
+    font-size: $font-size-base;
+    margin-bottom: $spacing-small;
+  }
+
+  .empty-description {
+    font-size: $font-size-small;
+    color: $secondary-color;
+  }
+}
