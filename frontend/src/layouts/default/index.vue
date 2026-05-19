@@ -1,6 +1,5 @@
 <template>
   <div class="default-layout">
-    <!-- 侧边栏 -->
     <a-layout-sider
       :width="isCollapse ? 64 : 240"
       :collapsed="isCollapse"
@@ -29,28 +28,24 @@
         @menu-item-click="handleMenuClick"
       >
         <template v-for="route in menuRoutes" :key="route.path">
-          <!-- 没有子菜单的路由 -->
-          <a-menu-item v-if="!route.children || route.children.length === 0" :key="route.path">
+          <a-menu-item v-if="!hasSubPages(route)" :key="route.path">
             <template #icon>
               <component :is="getIcon(route.meta?.icon)" />
             </template>
             {{ route.meta?.title }}
           </a-menu-item>
 
-          <!-- 有子菜单的路由 -->
           <a-sub-menu v-else :key="route.path">
             <template #icon>
               <component :is="getIcon(route.meta?.icon)" />
             </template>
-            <template #title>{{ route.meta?.title }}</template>
-
+            <template #title>
+              <span class="sub-menu-parent" @click.stop="handleMenuClick(route.path)">{{ route.meta?.title }}</span>
+            </template>
             <a-menu-item
-              v-for="child in route.children"
+              v-for="child in subPages(route)"
               :key="route.path + '/' + child.path"
             >
-              <template #icon>
-                <component :is="getIcon(child.meta?.icon)" />
-              </template>
               {{ child.meta?.title }}
             </a-menu-item>
           </a-sub-menu>
@@ -58,9 +53,7 @@
       </a-menu>
     </a-layout-sider>
 
-    <!-- 主体内容 -->
     <a-layout class="main-layout">
-      <!-- 顶部导航 -->
       <a-layout-header class="header">
         <div class="header-left">
           <a-button type="text" @click="toggleCollapse">
@@ -68,22 +61,17 @@
               <component :is="isCollapse ? IconMenuUnfold : IconMenuFold" />
             </template>
           </a-button>
-
           <a-breadcrumb>
             <a-breadcrumb-item v-for="item in breadcrumbs" :key="item.path">
               {{ item.meta?.title }}
             </a-breadcrumb-item>
           </a-breadcrumb>
         </div>
-
         <div class="header-right">
           <a-space :size="16">
             <a-button type="text" shape="circle">
-              <template #icon>
-                <IconNotification />
-              </template>
+              <template #icon><IconNotification /></template>
             </a-button>
-
             <a-dropdown trigger="click" @select="handleCommand">
               <div class="user-info">
                 <a-avatar :size="32" :style="{ backgroundColor: '#165dff' }">
@@ -93,25 +81,15 @@
                 <IconDown />
               </div>
               <template #content>
-                <a-doption value="profile">
-                  <IconUser />
-                  <span>个人中心</span>
-                </a-doption>
-                <a-doption value="settings">
-                  <IconSettings />
-                  <span>系统设置</span>
-                </a-doption>
-                <a-doption value="logout">
-                  <IconExport />
-                  <span>退出登录</span>
-                </a-doption>
+                <a-doption value="profile"><IconUser /><span>个人中心</span></a-doption>
+                <a-doption value="settings"><IconSettings /><span>系统设置</span></a-doption>
+                <a-doption value="logout"><IconExport /><span>退出登录</span></a-doption>
               </template>
             </a-dropdown>
           </a-space>
         </div>
       </a-layout-header>
 
-      <!-- 页面内容 -->
       <a-layout-content class="main-content">
         <div class="content-wrapper">
           <router-view v-slot="{ Component }">
@@ -130,44 +108,32 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Modal, Message } from '@arco-design/web-vue'
 import {
-  IconHome,
-  IconMenuUnfold,
-  IconMenuFold,
-  IconApps,
-  IconUser,
-  IconSettings,
-  IconExport,
-  IconNotification,
-  IconDown,
-  IconBook,
-  IconCalendar,
-  IconDashboard,
-  IconLock,
-  IconTool,
-  IconUserGroup,
-  IconSafe,
-  IconMessage,
-  IconHeart,
-  IconStar,
-  IconSearch,
-  IconFire,
+  IconHome, IconMenuUnfold, IconMenuFold, IconApps, IconUser,
+  IconSettings, IconExport, IconNotification, IconDown, IconBook,
+  IconCalendar, IconDashboard, IconLock, IconTool, IconUserGroup,
+  IconSafe, IconMessage, IconHeart, IconStar, IconSearch, IconFire,
 } from '@arco-design/web-vue/es/icon'
+import type { RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
-
 const isCollapse = ref(false)
 
-// 当前激活的菜单
+function hasSubPages(r: RouteRecordRaw): boolean {
+  return (r.children || []).filter((c) => c.path && c.path !== '').length > 0
+}
+
+function subPages(r: RouteRecordRaw): RouteRecordRaw[] {
+  return (r.children || []).filter((c) => c.path && c.path !== '')
+}
+
 const activeMenu = computed(() => {
-  // Match best-fit: the child path is what the user actually navigated to
   const matched = route.matched
   for (let i = matched.length - 1; i >= 0; i--) {
     const r = matched[i]
     if (r.path) {
-      // If this is a child of a layout route, the key format is "parent/child"
       if (i > 0 && matched[i - 1].path && matched[i - 1].path !== '/') {
         return matched[i - 1].path + '/' + r.path
       }
@@ -177,7 +143,6 @@ const activeMenu = computed(() => {
   return route.path
 })
 
-// 默认展开的父级菜单
 const openKeys = computed(() => {
   const matched = route.matched
   const keys: string[] = []
@@ -189,7 +154,6 @@ const openKeys = computed(() => {
   return keys
 })
 
-// 菜单路由（从路由中过滤出需要显示在侧边栏的路由）
 const menuRoutes = computed(() => {
   const routes = router.getRoutes()
   return routes
@@ -200,56 +164,38 @@ const menuRoutes = computed(() => {
         !r.path.includes(':') &&
         r.meta?.title &&
         !r.meta?.ignoreAuth &&
-        r.children?.length > 0
+        r.children &&
+        r.children.length > 0
     )
     .sort(() => 0)
 })
 
-// 面包屑
 const breadcrumbs = computed(() => {
-  const matched = route.matched.filter((item) => item.meta?.title)
-  return matched
+  return route.matched.filter((item) => item.meta?.title)
 })
 
-// 菜单点击导航
-const handleMenuClick = (key: string) => {
+function handleMenuClick(key: string) {
   router.push(key)
 }
 
-// 获取图标组件
-const getIcon = (iconName?: string) => {
+function getIcon(iconName?: string) {
   if (!iconName) return IconApps
-  const iconMap: Record<string, any> = {
-    'icon-apps': IconApps,
-    'icon-user': IconUser,
-    'icon-settings': IconSettings,
-    'icon-export': IconExport,
-    'icon-notification': IconNotification,
-    'icon-home': IconHome,
-    'icon-book': IconBook,
-    'icon-calendar': IconCalendar,
-    'icon-dashboard': IconDashboard,
-    'icon-lock': IconLock,
-    'icon-tool': IconTool,
-    'icon-usergroup': IconUserGroup,
-    'icon-safe': IconSafe,
-    'icon-message': IconMessage,
-    'icon-heart': IconHeart,
-    'icon-star': IconStar,
-    'icon-search': IconSearch,
-    'icon-fire': IconFire,
+  const map: Record<string, any> = {
+    'icon-apps': IconApps, 'icon-user': IconUser, 'icon-settings': IconSettings,
+    'icon-export': IconExport, 'icon-notification': IconNotification, 'icon-home': IconHome,
+    'icon-book': IconBook, 'icon-calendar': IconCalendar, 'icon-dashboard': IconDashboard,
+    'icon-lock': IconLock, 'icon-tool': IconTool, 'icon-usergroup': IconUserGroup,
+    'icon-safe': IconSafe, 'icon-message': IconMessage, 'icon-heart': IconHeart,
+    'icon-star': IconStar, 'icon-search': IconSearch, 'icon-fire': IconFire,
   }
-  const key = `icon-${iconName.toLowerCase()}`
-  return iconMap[key] || IconApps
+  return map['icon-' + (iconName || '').toLowerCase()] || IconApps
 }
 
-// 切换侧边栏折叠状态
-const toggleCollapse = () => {
+function toggleCollapse() {
   isCollapse.value = !isCollapse.value
 }
 
-// 处理下拉菜单命令
-const handleCommand = async (command: string) => {
+async function handleCommand(command: string) {
   switch (command) {
     case 'profile':
       router.push('/profile')
@@ -268,9 +214,7 @@ const handleCommand = async (command: string) => {
         await userStore.logout()
         Message.success('退出登录成功')
         router.push('/login')
-      } catch {
-        // 用户取消操作
-      }
+      } catch { /* cancelled */ }
       break
   }
 }
@@ -301,26 +245,11 @@ const handleCommand = async (command: string) => {
         display: flex;
         align-items: center;
         gap: 12px;
-
-        .logo-icon {
-          font-size: 24px;
-          color: #165dff;
-        }
-
-        .logo-text {
-          font-size: 16px;
-          font-weight: 600;
-          color: #1d2129;
-          white-space: nowrap;
-        }
+        .logo-icon { font-size: 24px; color: #165dff; }
+        .logo-text { font-size: 16px; font-weight: 600; color: #1d2129; white-space: nowrap; }
       }
 
-      .logo-collapsed {
-        .arco-icon {
-          font-size: 24px;
-          color: #165dff;
-        }
-      }
+      .logo-collapsed .arco-icon { font-size: 24px; color: #165dff; }
     }
 
     .sidebar-menu {
@@ -329,31 +258,26 @@ const handleCommand = async (command: string) => {
       height: calc(100vh - 60px);
       overflow-y: auto;
 
+      .sub-menu-parent {
+        cursor: pointer;
+        &:hover { color: #165dff; }
+      }
+
       :deep(.arco-menu-item) {
         margin: 4px 12px;
         border-radius: 6px;
-
-        &:hover {
-          background-color: #f2f3f5;
-        }
-
+        &:hover { background-color: #f2f3f5; }
         &.arco-menu-selected {
           background-color: #e8f3ff;
           color: #165dff;
-
-          &::before {
-            background-color: #165dff;
-          }
+          &::before { background-color: #165dff; }
         }
       }
 
       :deep(.arco-menu-inline-header) {
         margin: 4px 12px;
         border-radius: 6px;
-
-        &:hover {
-          background-color: #f2f3f5;
-        }
+        &:hover { background-color: #f2f3f5; }
       }
     }
   }
@@ -377,55 +301,24 @@ const handleCommand = async (command: string) => {
         display: flex;
         align-items: center;
         gap: 16px;
-
-        :deep(.arco-btn) {
-          color: #4e5969;
-
-          &:hover {
-            color: #165dff;
-          }
-        }
-
+        :deep(.arco-btn) { color: #4e5969; &:hover { color: #165dff; } }
         :deep(.arco-breadcrumb) {
-          .arco-breadcrumb-item {
-            color: #4e5969;
-          }
-
-          .arco-breadcrumb-item-link {
-            color: #86909c;
-
-            &:hover {
-              color: #165dff;
-            }
-          }
+          .arco-breadcrumb-item { color: #4e5969; }
+          .arco-breadcrumb-item-link { color: #86909c; &:hover { color: #165dff; } }
         }
       }
 
-      .header-right {
-        .user-info {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          padding: 4px 8px;
-          border-radius: 6px;
-          transition: background-color 0.3s;
-
-          &:hover {
-            background-color: #f2f3f5;
-          }
-
-          .user-name {
-            font-size: 14px;
-            color: #1d2129;
-            font-weight: 500;
-          }
-
-          .arco-icon {
-            color: #86909c;
-            font-size: 12px;
-          }
-        }
+      .header-right .user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: background-color 0.3s;
+        &:hover { background-color: #f2f3f5; }
+        .user-name { font-size: 14px; color: #1d2129; font-weight: 500; }
+        .arco-icon { color: #86909c; font-size: 12px; }
       }
     }
 
@@ -433,22 +326,11 @@ const handleCommand = async (command: string) => {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
-
-      .content-wrapper {
-        min-height: 100%;
-      }
+      .content-wrapper { min-height: 100%; }
     }
   }
 }
 
-// 页面切换动画
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
