@@ -1,77 +1,88 @@
 version: '3.8'
 
 services:
-  # PostgreSQL数据库
-  postgres:
-    image: postgres:14-alpine
+  postgres_db:
     container_name: school_postgres
+    image: postgres:16-alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your_password
+      POSTGRES_USER: school_admin
+      POSTGRES_PASSWORD: 447c951c44220596fa3f8feec692cfd9
       POSTGRES_DB: school_management
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - school_pgdata:/var/lib/postgresql/data
     networks:
-      - school_network
+      - school_management_network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U school_admin -d school_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # Redis缓存
-  redis:
-    image: redis:7-alpine
+  redis_cache:
     container_name: school_redis
-    ports:
-      - "6379:6379"
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
     volumes:
-      - redis_data:/data
+      - school_redisdata:/data
     networks:
-      - school_network
+      - school_management_network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # 后端服务
   backend:
-    build:
-      context: ./backend
-      dockerfile: ../docker/Dockerfile.backend
     container_name: school_backend
+    image: node:18-alpine
+    working_dir: /app
     environment:
       NODE_ENV: production
-      DB_HOST: postgres
+      DB_HOST: school_postgres
       DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: your_password
+      DB_USERNAME: school_admin
+      DB_PASSWORD: 447c951c44220596fa3f8feec692cfd9
       DB_DATABASE: school_management
-      REDIS_HOST: redis
+      REDIS_HOST: school_redis
       REDIS_PORT: 6379
-      JWT_SECRET: your_jwt_secret_key
+      JWT_SECRET: b7bf14465b32b5b4eb394d7a833c836bda71f8c1b5fc18128e6de4de8de5b33b
+      JWT_REFRESH_SECRET: b7bf14465b32b5b4eb394d7a833c836bda71f8c1b5fc18128e6de4de8de5b33b_refresh
+      CORS_ORIGIN: '*'
+      PORT: 3000
     ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-      - redis
+      - '3001:3000'
+    volumes:
+      - /www/school-management/backend:/app
+    command: sh -c 'npm install && npm run build && node dist/main'
     networks:
-      - school_network
+      - school_management_network
     restart: unless-stopped
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+      redis_cache:
+        condition: service_healthy
 
-  # 前端服务
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: ../docker/Dockerfile.frontend
     container_name: school_frontend
+    image: nginx:alpine
     ports:
-      - "80:80"
+      - '8081:80'
+    volumes:
+      - /www/school-management/frontend/dist:/usr/share/nginx/html:ro
+      - /www/school-management/docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - school_management_network
     depends_on:
       - backend
-    networks:
-      - school_network
     restart: unless-stopped
 
-volumes:
-  postgres_data:
-  redis_data:
-
 networks:
-  school_network:
-    driver: bridge
+  school_management_network:
+    external: true
+
+volumes:
+  school_pgdata:
+  school_redisdata:
