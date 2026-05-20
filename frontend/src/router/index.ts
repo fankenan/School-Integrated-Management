@@ -24,6 +24,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     children: [
       { path: '', name: 'OfficeHome', meta: { title: '办公概览' }, component: () => import('@/views/office/index.vue') },
       { path: 'documents', name: 'OfficeDocuments', meta: { title: '公文处理' }, component: () => import('@/views/office/documents/index.vue') },
+      { path: 'leave', name: 'OfficeLeave', meta: { title: '请假管理' }, component: () => import('@/views/office/leave.vue') },
     ],
   },
   {
@@ -32,6 +33,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '教学管理', icon: 'Book' },
     children: [
       { path: '', name: 'TeachingHome', meta: { title: '教学管理' }, component: () => import('@/views/teaching/index.vue') },
+      { path: 'grades', name: 'TeachingGrades', meta: { title: '成绩管理' }, component: () => import('@/views/teaching/grades.vue') },
       { path: 'classes', name: 'TeachingClasses', meta: { title: '班级管理' }, component: () => import('@/views/teaching/classes.vue') },
     ],
   },
@@ -57,6 +59,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '后勤服务', icon: 'Tool' },
     children: [
       { path: '', name: 'LogisticsHome', meta: { title: '后勤服务' }, component: () => import('@/views/logistics/index.vue') },
+      { path: 'repair', name: 'LogisticsRepair', meta: { title: '维修管理' }, component: () => import('@/views/logistics/repair.vue') },
     ],
   },
   {
@@ -88,6 +91,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '校园卫生', icon: 'Safe' },
     children: [
       { path: '', name: 'HealthHome', meta: { title: '校园卫生' }, component: () => import('@/views/health/index.vue') },
+      { path: 'examination', name: 'HealthExam', meta: { title: '健康体检' }, component: () => import('@/views/health/examination.vue') },
+      { path: 'mental', name: 'HealthMental', meta: { title: '心理健康' }, component: () => import('@/views/health/mental.vue') },
     ],
   },
   {

@@ -17,6 +17,12 @@ import { AccountsModule } from './modules/accounts/accounts.module'
 import { GradeAdminsModule } from './modules/grade-admins/grade-admins.module'
 import { SchoolsModule } from './modules/schools/schools.module'
 import { ClassesModule } from './modules/classes/classes.module'
+import { RepairsModule } from './modules/repairs/repairs.module'
+import { HealthExamsModule } from './modules/health-exams/health-exams.module'
+import { MentalRecordsModule } from './modules/mental-records/mental-records.module'
+import { GradesModule } from './modules/grades/grades.module'
+import { DocumentsModule } from './modules/documents/documents.module'
+import { LeavesModule } from './modules/leaves/leaves.module'
 
 import { EventBusModule } from './common/event-bus'
 import { WorkflowModule } from './common/workflow'
@@ -58,7 +64,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware'
     EventBusModule,
     AuthModule, UsersModule, RolesModule, PermissionsModule, DepartmentsModule,
     StudentsModule, TeachersModule, StaffModule, ParentsModule,
-    AccountsModule, GradeAdminsModule, SchoolsModule, ClassesModule,
+    AccountsModule, GradeAdminsModule, SchoolsModule, ClassesModule, RepairsModule, HealthExamsModule, MentalRecordsModule, GradesModule, DocumentsModule, LeavesModule,
     WorkflowModule, NotificationModule, FileModule, WechatModule, WebsocketModule,
   ],
   controllers: [],
