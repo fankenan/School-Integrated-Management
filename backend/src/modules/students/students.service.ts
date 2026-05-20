@@ -12,7 +12,11 @@ export class StudentsService {
   ) {}
 
   async create(dto: CreateStudentDto) {
-    const student = this.studentRepo.create(dto)
+    const clean: any = { ...dto }
+    if (!clean.birthday) delete clean.birthday
+    if (!clean.enrollmentDate) delete clean.enrollmentDate
+    if (!clean.classId) delete clean.classId
+    const student = this.studentRepo.create(clean)
     return this.studentRepo.save(student)
   }
 

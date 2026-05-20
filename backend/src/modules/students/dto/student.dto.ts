@@ -16,7 +16,7 @@ export class CreateStudentDto {
   gender?: string
 
   @ApiPropertyOptional({ description: '出生日期' })
-  @IsOptional() @IsDateString()
+  @IsOptional() @IsString()
   birthday?: string
 
   @ApiPropertyOptional({ description: '身份证号' })
@@ -44,7 +44,7 @@ export class CreateStudentDto {
   guardianRelation?: string
 
   @ApiPropertyOptional({ description: '入学日期' })
-  @IsOptional() @IsDateString()
+  @IsOptional() @IsString()
   enrollmentDate?: string
 
   @ApiPropertyOptional({ description: '班级ID' })
@@ -66,7 +66,7 @@ export class UpdateStudentDto {
   gender?: string
 
   @ApiPropertyOptional({ description: '出生日期' })
-  @IsOptional() @IsDateString()
+  @IsOptional() @IsString()
   birthday?: string
 
   @ApiPropertyOptional({ description: '身份证号' })

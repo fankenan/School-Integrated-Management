@@ -24,12 +24,16 @@ export class CreateStaffDto {
   phone?: string
 
   @ApiPropertyOptional({ description: '入职日期' })
-  @IsOptional() @IsDateString()
+  @IsOptional() @IsString()
   hireDate?: string
 
   @ApiPropertyOptional({ description: '部门ID' })
   @IsOptional() @IsString()
   departmentId?: string
+
+  @ApiPropertyOptional({ description: '部门ID列表（前端多选兼容）', type: [String] })
+  @IsOptional()
+  departmentIds?: string[]
 
   @ApiPropertyOptional({ description: '学校ID' })
   @IsOptional() @IsString()

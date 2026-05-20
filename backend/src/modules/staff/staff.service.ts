@@ -12,7 +12,10 @@ export class StaffService {
   ) {}
 
   async create(dto: CreateStaffDto) {
-    const staff = this.staffRepo.create(dto)
+    const clean: any = { ...dto }
+    if (!clean.hireDate) delete clean.hireDate
+    if (!clean.departmentId) delete clean.departmentId
+    const staff = this.staffRepo.create(clean)
     return this.staffRepo.save(staff)
   }
 
