@@ -41,7 +41,7 @@ import { http } from '@/utils/request'
 const BASE = '/api/v1/departments'
 const list = ref<any[]>([]); const treeList = ref<any[]>([]); const loading = ref(false)
 const drawer = ref(false); const editingId = ref(''); const parentName = ref('顶级')
-const form = ref({ name: '', code: '', description: '', leader: '', phone: '', sort: 0, status: 1, parent: null as any })
+const form = ref({ name: '', code: '', description: '', leader: '', phone: '', sort: 0, status: 1, parentId: '' as string })
 
 function toTree(items: any[], parentId: string | null = null, level = 0): any[] {
   const result: any[] = []
@@ -62,19 +62,18 @@ async function load() {
 
 function openAdd(parent: any) {
   editingId.value = ''; parentName.value = parent ? parent.name : '顶级'
-  form.value = { name: '', code: '', description: '', leader: '', phone: '', sort: 0, status: 1, parent: parent || null }
+  form.value = { name: '', code: '', description: '', leader: '', phone: '', sort: 0, status: 1, parentId: parent ? parent.id : '' }
   drawer.value = true
 }
 function openEdit(r: any) {
   editingId.value = r.id; parentName.value = r.parent?.name || '顶级'
-  form.value = { name: r.name, code: r.code, description: r.description, leader: r.leader, phone: r.phone, sort: r.sort, status: r.status, parent: r.parent }
+  form.value = { name: r.name, code: r.code, description: r.description, leader: r.leader, phone: r.phone, sort: r.sort, status: r.status, parentId: r.parent ? r.parent.id : '' }
   drawer.value = true
 }
 async function save() {
   if (!form.value.name || !form.value.code) { Message.warning('名称和代码必填'); return }
-  const payload = { ...form.value }
-  if (payload.parent?.id) payload.parent = { id: payload.parent.id }
-  else if (!payload.parent) payload.parent = null
+  const payload: any = { ...form.value }
+  if (!payload.parentId) delete payload.parentId
   if (editingId.value) await http.put(`${BASE}/${editingId.value}`, payload)
   else await http.post(BASE, payload)
   Message.success(editingId.value?'更新成功':'创建成功'); drawer.value = false; load()
