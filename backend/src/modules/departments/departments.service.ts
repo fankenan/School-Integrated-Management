@@ -21,25 +21,12 @@ export class DepartmentsService {
     return department
   }
 
-  async findTree() {
-    const departments = await this.departmentRepository.find({
+  async findAll() {
+    return this.departmentRepository.find({
       where: { status: 1 },
       order: { sort: 'ASC', createdAt: 'DESC' },
-      relations: ['children', 'users', 'parent'],
+      relations: ['parent', 'children', 'users'],
     })
-    return this.buildTree(departments)
-  }
-
-  private buildTree(departments: Department[], parentId: string | null = null): any[] {
-    return departments
-      .filter((d) => {
-        if (!parentId) return !d.parent
-        return d.parent?.id === parentId
-      })
-      .map((d) => ({
-        ...d,
-        children: this.buildTree(departments, d.id),
-      }))
   }
 
   async create(dto: CreateDepartmentDto): Promise<Department> {

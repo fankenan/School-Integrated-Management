@@ -27,7 +27,7 @@ export class DepartmentsController {
   @ApiOperation({ summary: '获取部门列表' })
   @ApiResponse({ status: 200, description: '获取成功' })
   async findAll() {
-    const result = await this.departmentsService.findTree()
+    const result = await this.departmentsService.findAll()
     return {
       code: 200,
       message: '获取成功',
