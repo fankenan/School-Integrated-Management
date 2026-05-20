@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Like } from 'typeorm'
 import { Teacher } from '../../entities/teacher.entity'
@@ -16,7 +16,12 @@ export class TeachersService {
     if (!clean.hireDate) delete clean.hireDate
     if (!clean.departmentId) delete clean.departmentId
     const teacher = this.teacherRepo.create(clean)
-    return this.teacherRepo.save(teacher)
+    try {
+      return await this.teacherRepo.save(teacher)
+    } catch (e: any) {
+      if (e.code === '23505') throw new BadRequestException('工号已存在，请更换')
+      throw e
+    }
   }
 
   async findAll(query: TeacherQueryDto) {

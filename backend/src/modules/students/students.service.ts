@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Like } from 'typeorm'
 import { Student } from '../../entities/student.entity'
@@ -17,7 +17,12 @@ export class StudentsService {
     if (!clean.enrollmentDate) delete clean.enrollmentDate
     if (!clean.classId) delete clean.classId
     const student = this.studentRepo.create(clean)
-    return this.studentRepo.save(student)
+    try {
+      return await this.studentRepo.save(student)
+    } catch (e: any) {
+      if (e.code === '23505') throw new BadRequestException('学号已存在，请更换')
+      throw e
+    }
   }
 
   async findAll(query: StudentQueryDto) {
