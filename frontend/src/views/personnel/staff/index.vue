@@ -80,8 +80,11 @@ function onPageChange(p: number) { query.page = p; pagination.current = p; fetch
 function openAdd() { editingId.value = ''; Object.assign(form, { staffNo: '', name: '', gender: 'M', position: '', phone: '', hireDate: '', departmentIds: [] as string[] }); drawerVisible.value = true }
 function openEdit(r: StaffItem) { editingId.value = r.id; Object.assign(form, { ...r, departmentIds: r.departmentId ? [r.departmentId] : [] }); drawerVisible.value = true }
 async function handleSubmit() {
-  if (editingId.value) { await updateStaff(editingId.value, form); Message.success('更新成功') }
-  else { await createStaff(form); Message.success('新增成功') }
+  const payload: any = { ...form }
+  if (!payload.hireDate) delete payload.hireDate
+  if (payload.departmentIds) { payload.departmentId = payload.departmentIds[0] || undefined; delete payload.departmentIds }
+  if (editingId.value) { await updateStaff(editingId.value, payload); Message.success('更新成功') }
+  else { await createStaff(payload); Message.success('新增成功') }
   drawerVisible.value = false; fetchData()
 }
 async function handleDelete(id: string) { await deleteStaff(id); Message.success('删除成功'); fetchData() }

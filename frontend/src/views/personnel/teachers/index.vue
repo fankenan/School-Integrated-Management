@@ -85,8 +85,11 @@ function onPageChange(p: number) { query.page = p; pagination.current = p; fetch
 function openAdd() { editingId.value = ''; Object.assign(form, { teacherNo: '', name: '', gender: 'M', title: '', subjects: '', education: '', phone: '', email: '', hireDate: '', departmentIds: [] }); drawerVisible.value = true }
 function openEdit(r: TeacherItem) { editingId.value = r.id; Object.assign(form, { ...r, departmentIds: r.departmentId ? [r.departmentId] : [] }); drawerVisible.value = true }
 async function handleSubmit() {
-  if (editingId.value) { await updateTeacher(editingId.value, form); Message.success('更新成功') }
-  else { await createTeacher(form); Message.success('新增成功') }
+  const payload: any = { ...form }
+  if (!payload.hireDate) delete payload.hireDate
+  if (payload.departmentIds) { payload.departmentId = payload.departmentIds[0] || undefined; delete payload.departmentIds }
+  if (editingId.value) { await updateTeacher(editingId.value, payload); Message.success('更新成功') }
+  else { await createTeacher(payload); Message.success('新增成功') }
   drawerVisible.value = false; fetchData()
 }
 async function handleDelete(id: string) { await deleteTeacher(id); Message.success('删除成功'); fetchData() }
