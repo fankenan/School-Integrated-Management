@@ -1,14 +1,7 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToOne,
-  JoinTable,
-  ManyToMany,
-  DeleteDateColumn,
+  Entity, PrimaryGeneratedColumn, Column,
+  CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  ManyToOne, ManyToMany, JoinTable,
 } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { Role } from './role.entity'
@@ -51,33 +44,28 @@ export class User {
   avatar?: string
 
   @ApiProperty({ description: '状态: 1-正常 0-禁用' })
-  @Column({ 
-    type: 'enum', 
-    enum: UserStatus, 
-    default: UserStatus.ACTIVE, 
-    comment: '状态: 1-正常 0-禁用' 
-  })
+  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
   status: UserStatus
 
   @ApiProperty({ description: '最后登录时间', required: false })
   @Column({ type: 'timestamp', nullable: true })
   lastLoginAt?: Date
 
-  @ApiProperty({ description: '部门ID', required: false })
-  @Column({ name: 'department_id', nullable: true })
-  departmentId?: string
-
-  @ApiProperty({ description: '部门', type: () => Department, required: false })
-  @ManyToOne(() => Department, (department) => department.users)
-  department?: Department
-
-  @ApiProperty({ description: '学校ID', required: false })
-  @Column({ name: 'school_id', nullable: true })
-  schoolId?: string
+  @ApiProperty({ description: '所属部门', type: () => [Department], required: false })
+  @ManyToMany(() => Department, (department) => department.users)
+  @JoinTable({
+    name: 'user_departments',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'department_id', referencedColumnName: 'id' },
+  })
+  departments: Department[]
 
   @ApiProperty({ description: '所属学校', type: () => School, required: false })
   @ManyToOne(() => School, (school) => school.users)
   school?: School
+
+  @Column({ name: 'school_id', nullable: true })
+  schoolId?: string
 
   @ApiProperty({ description: '角色列表', type: () => [Role] })
   @ManyToMany(() => Role, (role) => role.users)
@@ -88,15 +76,12 @@ export class User {
   })
   roles: Role[]
 
-  @ApiProperty({ description: '创建时间' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date
 
-  @ApiProperty({ description: '更新时间' })
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
-  @ApiProperty({ description: '删除时间', required: false })
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date
 }

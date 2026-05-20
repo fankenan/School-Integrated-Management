@@ -39,7 +39,7 @@
           <a-col :span="12"><a-form-item label="手机号"><a-input v-model="form.phone" /></a-form-item></a-col>
           <a-col :span="12"><a-form-item label="邮箱"><a-input v-model="form.email" /></a-form-item></a-col>
         </a-row>
-        <a-form-item label="所属部门"><a-select v-model="form.departmentId" placeholder="选择部门" allow-search :loading="deptLoading"><a-option v-for="d in deptOpts" :key="d.id" :value="d.id">{{ d.name }}</a-option></a-select></a-form-item>
+        <a-form-item label="所属部门"><a-select v-model="form.departmentIds" placeholder="选择部门（可多选）" multiple allow-search :loading="deptLoading"><a-option v-for="d in deptOpts" :key="d.id" :value="d.id">{{ d.name }}</a-option></a-select></a-form-item>
       </a-form>
     </a-drawer>
   </div>
@@ -60,7 +60,7 @@ const deptLoading = ref(false)
 const pagination = reactive({ current: 1, pageSize: 10, total: 0 })
 const drawerVisible = ref(false)
 const editingId = ref('')
-const form = reactive<Partial<TeacherItem>>({ teacherNo: '', name: '', gender: 'M', title: '', subjects: '', education: '', phone: '', email: '', hireDate: '', departmentId: '' })
+const form = reactive<Partial<TeacherItem>>({ teacherNo: '', name: '', gender: 'M', title: '', subjects: '', education: '', phone: '', email: '', hireDate: '', departmentIds: [] as string[] })
 
 const columns = [
   { title: '工号', dataIndex: 'teacherNo', width: 100 },
@@ -82,8 +82,8 @@ async function fetchData() {
 function handleSearch() { query.page = 1; fetchData() }
 function handleReset() { Object.assign(query, { keyword: '', status: '', page: 1, pageSize: 10 }); fetchData() }
 function onPageChange(p: number) { query.page = p; pagination.current = p; fetchData() }
-function openAdd() { editingId.value = ''; Object.assign(form, { teacherNo: '', name: '', gender: 'M', title: '', subjects: '', education: '', phone: '', email: '', hireDate: '', departmentId: '' }); drawerVisible.value = true }
-function openEdit(r: TeacherItem) { editingId.value = r.id; Object.assign(form, r); drawerVisible.value = true }
+function openAdd() { editingId.value = ''; Object.assign(form, { teacherNo: '', name: '', gender: 'M', title: '', subjects: '', education: '', phone: '', email: '', hireDate: '', departmentIds: [] }); drawerVisible.value = true }
+function openEdit(r: TeacherItem) { editingId.value = r.id; Object.assign(form, { ...r, departmentIds: r.departmentId ? [r.departmentId] : [] }); drawerVisible.value = true }
 async function handleSubmit() {
   if (editingId.value) { await updateTeacher(editingId.value, form); Message.success('更新成功') }
   else { await createTeacher(form); Message.success('新增成功') }
@@ -91,7 +91,8 @@ async function handleSubmit() {
 }
 async function handleDelete(id: string) { await deleteTeacher(id); Message.success('删除成功'); fetchData() }
 
-onMounted(fetchData)
+async function loadDeptOpts() { deptLoading.value = true; try { deptOpts.value = await http.get('/api/v1/departments') as any[] } catch {} finally { deptLoading.value = false } }
+onMounted(() => { fetchData(); loadDeptOpts() })
 </script>
 
 <style scoped lang="scss">

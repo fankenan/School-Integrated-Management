@@ -4,7 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToMany,
   Tree,
   TreeParent,
   TreeChildren,
@@ -67,7 +67,7 @@ export class Department {
   children?: Department[]
 
   @ApiProperty({ description: '用户列表', type: () => [User], required: false })
-  @OneToMany(() => User, (user) => user.department)
+  @ManyToMany(() => User, (user) => user.departments)
   users: User[]
 
   @ApiProperty({ description: '创建时间' })
