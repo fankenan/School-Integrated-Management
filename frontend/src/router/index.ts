@@ -32,6 +32,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '教学管理', icon: 'Book' },
     children: [
       { path: '', name: 'TeachingHome', meta: { title: '教学管理' }, component: () => import('@/views/teaching/index.vue') },
+      { path: 'classes', name: 'TeachingClasses', meta: { title: '班级管理' }, component: () => import('@/views/teaching/classes.vue') },
     ],
   },
   {
@@ -111,6 +112,8 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { title: '系统设置', icon: 'Settings' },
     children: [
       { path: '', name: 'SettingsHome', meta: { title: '系统设置' }, component: () => import('@/views/settings/index.vue') },
+      { path: 'school', name: 'SettingsSchool', meta: { title: '学校管理' }, component: () => import('@/views/settings/school.vue') },
+      { path: 'departments', name: 'SettingsDepartments', meta: { title: '部门管理' }, component: () => import('@/views/settings/departments.vue') },
     ],
   },
 ]

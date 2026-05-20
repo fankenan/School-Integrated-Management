@@ -15,6 +15,8 @@ import { StaffModule } from './modules/staff/staff.module'
 import { ParentsModule } from './modules/parents/parents.module'
 import { AccountsModule } from './modules/accounts/accounts.module'
 import { GradeAdminsModule } from './modules/grade-admins/grade-admins.module'
+import { SchoolsModule } from './modules/schools/schools.module'
+import { ClassesModule } from './modules/classes/classes.module'
 
 import { EventBusModule } from './common/event-bus'
 import { WorkflowModule } from './common/workflow'
@@ -56,7 +58,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware'
     EventBusModule,
     AuthModule, UsersModule, RolesModule, PermissionsModule, DepartmentsModule,
     StudentsModule, TeachersModule, StaffModule, ParentsModule,
-    AccountsModule, GradeAdminsModule,
+    AccountsModule, GradeAdminsModule, SchoolsModule, ClassesModule,
     WorkflowModule, NotificationModule, FileModule, WechatModule, WebsocketModule,
   ],
   controllers: [],

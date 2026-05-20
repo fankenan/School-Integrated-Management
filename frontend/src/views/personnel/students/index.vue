@@ -45,7 +45,7 @@
         </a-row>
         <a-row :gutter="16">
           <a-col :span="12"><a-form-item label="入学日期"><a-input v-model="form.enrollmentDate" placeholder="YYYY-MM-DD" /></a-form-item></a-col>
-          <a-col :span="12"><a-form-item label="班级"><a-input v-model="form.classId" placeholder="班级ID" /></a-form-item></a-col>
+          <a-col :span="12"><a-form-item label="班级"><a-select v-model="form.classId" placeholder="选择班级" allow-search :loading="classLoading"><a-option v-for="c in classOpts" :key="c.id" :value="c.id">{{ c.name }} ({{ c.grade }})</a-option></a-select></a-form-item></a-col>
         </a-row>
       </a-form>
     </a-drawer>
@@ -56,11 +56,14 @@
 import { ref, reactive, onMounted } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { IconSearch, IconRefresh, IconPlus, IconEdit, IconDelete } from '@arco-design/web-vue/es/icon'
+import { http } from '@/utils/request'
 import { getStudentList, createStudent, updateStudent, deleteStudent, StudentItem } from '@/api/personnel'
 
 const query = reactive({ keyword: '', status: '', page: 1, pageSize: 10 })
 const data = ref<StudentItem[]>([])
 const loading = ref(false)
+const classOpts = ref<any[]>([])
+const classLoading = ref(false)
 const pagination = reactive({ current: 1, pageSize: 10, total: 0 })
 const drawerVisible = ref(false)
 const editingId = ref('')

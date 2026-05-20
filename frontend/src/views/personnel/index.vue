@@ -28,7 +28,7 @@
         </a-card>
       </a-col>
       <a-col :span="6">
-        <a-card class="feature-card" :bordered="false" hoverable @click="Message.info('组织管理功能开发中')">
+        <a-card class="feature-card" :bordered="false" hoverable @click="router.push('/settings/departments')">
           <div class="feature-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"><IconUserGroup /></div>
           <div class="feature-info"><div class="feature-name">组织管理</div><div class="feature-desc">部门/年级/班级架构</div></div>
         </a-card>

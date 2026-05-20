@@ -39,7 +39,7 @@
           <a-col :span="12"><a-form-item label="手机号"><a-input v-model="form.phone" /></a-form-item></a-col>
           <a-col :span="12"><a-form-item label="邮箱"><a-input v-model="form.email" /></a-form-item></a-col>
         </a-row>
-        <a-form-item label="所属部门"><a-input v-model="form.departmentId" placeholder="部门ID" /></a-form-item>
+        <a-form-item label="所属部门"><a-select v-model="form.departmentId" placeholder="选择部门" allow-search :loading="deptLoading"><a-option v-for="d in deptOpts" :key="d.id" :value="d.id">{{ d.name }}</a-option></a-select></a-form-item>
       </a-form>
     </a-drawer>
   </div>
@@ -49,11 +49,14 @@
 import { ref, reactive, onMounted } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { IconSearch, IconRefresh, IconPlus, IconEdit, IconDelete } from '@arco-design/web-vue/es/icon'
+import { http } from '@/utils/request'
 import { getTeacherList, createTeacher, updateTeacher, deleteTeacher, TeacherItem } from '@/api/personnel'
 
 const query = reactive({ keyword: '', status: '', page: 1, pageSize: 10 })
 const data = ref<TeacherItem[]>([])
 const loading = ref(false)
+const deptOpts = ref<any[]>([])
+const deptLoading = ref(false)
 const pagination = reactive({ current: 1, pageSize: 10, total: 0 })
 const drawerVisible = ref(false)
 const editingId = ref('')
