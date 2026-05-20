@@ -65,6 +65,7 @@ async function searchStaff(kw: string) { if (!kw) return; const r = await getSta
 
 async function openCreateAccount(record: any) {
   form.value = { staffId: record?.id || '', username: '', password: '', roleCode: 'staff_role' }
+  if (record) staffOpts.value = [record]
   if (!roles.value.length) roles.value = await getAllRoles()
   showCreate.value = true
 }

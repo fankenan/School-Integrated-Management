@@ -82,6 +82,7 @@ async function searchTeachers(kw: string) {
 
 async function openCreateAccount(record: any) {
   form.value = { teacherId: record.id, username: '', password: '', roleCode: 'teacher' }
+  teacherOpts.value = [record]
   if (!roles.value.length) roles.value = await getAllRoles()
   showCreate.value = true
 }
